@@ -1,0 +1,1 @@
+.circular-gallery{width:100%;height:100%;overflow:hidden;cursor:grab;touch-action:pan-y;outline:none}.circular-gallery:active{cursor:grabbing}.circular-gallery canvas{display:block;width:100%;height:100%}.circular-gallery:focus-visible{outline:1px solid rgba(199,213,255,.8);outline-offset:6px}

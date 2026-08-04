@@ -117,6 +117,8 @@ let types = [
   { no: '04', slug: 'updates', cn: '最近更新', en: 'LATEST UPDATE', image: '/library/covers/neon-breeze.png' },
 ]
 
+types = types.map((type) => ({ ...type, image: toR2MediaUrl(type.image) }))
+
 const latestUpdateTrackIds = [185, 186, 187, 188]
 
 const genrePlaylists = [

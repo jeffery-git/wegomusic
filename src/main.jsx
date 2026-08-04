@@ -104,7 +104,7 @@ const rawTracks = [
 const localTracks = rawTracks.map((track) => ({
   ...track,
   image: toR2MediaUrl(track.image),
-  audio: toR2MediaUrl(track.audio),
+  audio: toR2MediaUrl(track.audio?.replace(/\\.wav$/i, '.mp3')),
   lyrics: toR2MediaUrl(track.lyrics),
 }))
 

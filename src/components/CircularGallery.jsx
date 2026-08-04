@@ -11,7 +11,7 @@ class Card {
     this.texture = new Texture(gl, { generateMipmaps: true })
     this.program = new Program(gl, { vertex: `attribute vec3 position;attribute vec2 uv;uniform mat4 modelViewMatrix;uniform mat4 projectionMatrix;varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`, fragment: `precision highp float;uniform sampler2D tMap;uniform float uRadius;varying vec2 vUv;float box(vec2 p,vec2 b,float r){vec2 d=abs(p)-b;return length(max(d,0.))+min(max(d.x,d.y),0.)-r;}void main(){float a=1.-smoothstep(-.003,.003,box(vUv-.5,vec2(.5-uRadius),uRadius));vec4 c=texture2D(tMap,vUv);gl_FragColor=vec4(c.rgb,a);}`, uniforms: { tMap: { value: this.texture }, uRadius: { value: .035 } }, transparent: true, depthTest: false, depthWrite: false })
     this.mesh = new Mesh(gl, { geometry, program: this.program }); this.mesh.setParent(scene)
-    const imageElement = new Image(); imageElement.decoding = 'async'; imageElement.src = image; imageElement.onload = () => { this.texture.image = imageElement }
+    const imageElement = new Image(); imageElement.crossOrigin = 'anonymous'; imageElement.decoding = 'async'; imageElement.src = image; imageElement.onload = () => { this.texture.image = imageElement }
     this.resize(viewport)
   }
   resize(viewport) { this.viewport = viewport; this.width = viewport.width * .205; this.height = this.width * 1.08; this.gap = viewport.width * .13; this.pitch = this.width + this.gap; this.total = this.pitch * this.count; this.mesh.scale.set(this.width, this.height, 1) }

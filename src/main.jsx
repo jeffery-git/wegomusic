@@ -8,7 +8,9 @@ import './style.css'
 gsap.registerPlugin(ScrollTrigger)
 ScrollTrigger.config({ limitCallbacks: true, ignoreMobileResize: true })
 
-const localTracks = [
+const R2_MEDIA_BASE_URL = 'https://pub-24cc0383e0514b31b33e7bfc05fd270c.r2.dev'
+const toR2MediaUrl = (path) => path?.startsWith('/library/') ? `${R2_MEDIA_BASE_URL}${path}` : path
+const rawTracks = [
   { id: 101, type: 'electronic', title: 'Frozen Echoes', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/frozen-echoes.png', audio: '/library/audio/frozen-echoes.wav' },
   { id: 102, type: 'electronic', title: 'Mountain Echoes', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/mountain-echoes.png', audio: '/library/audio/mountain-echoes.wav' },
   { id: 103, type: 'electronic', title: 'Nativara', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/nativara.png', audio: '/library/audio/nativara.wav' },
@@ -99,9 +101,16 @@ const localTracks = [
   { id: 188, type: 'romantic', title: '微醺', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/tipsy.png', audio: '/library/audio/tipsy.wav' },
 ]
 
+const localTracks = rawTracks.map((track) => ({
+  ...track,
+  image: toR2MediaUrl(track.image),
+  audio: toR2MediaUrl(track.audio),
+  lyrics: toR2MediaUrl(track.lyrics),
+}))
+
 const tracks = [localTracks[3], localTracks[5], localTracks[9], localTracks[10]]
 
-const types = [
+let types = [
   { no: '01', slug: 'electronic', cn: '电子音乐', en: 'ELECTRONIC MOTION', image: '/library/covers/universe-loop.png' },
   { no: '02', slug: 'vocal-pop', cn: '人声流行', en: 'VOCAL POP', image: '/library/covers/midnight-groove.png' },
   { no: '03', slug: 'romantic', cn: '浪漫抒情', en: 'ROMANTIC LYRIC', image: '/library/covers/starlight-harbor.png' },

@@ -462,7 +462,7 @@ function App() {
       <div className="recent-heading"><div><p className="section-kicker">02 / DAILY RECOMMENDATIONS</p><h2 id="recent-title">每日推荐</h2></div><p>每天一组，为此刻的心情挑选一首声音。</p></div>
       <div className="daily-circular-stage">
         <DeferredCircularGallery items={dailyItems} cardControlsRef={dailyCardControlsRef} />
-        {dailyRecommendations.map((track, index) => <article className="daily-orbit-card-ui" key={track.id} ref={node => { dailyCardControlsRef.current[index] = node }}><p>{String(index + 1).padStart(2, '0')} / DAILY PICK</p><h3>{track.title}</h3><small>{track.genre}</small><div><button onClick={() => choose(track)} aria-label={`播放 ${track.title}`}>{active.id === track.id && playing ? 'Ⅱ' : '▶'}<b>播放</b></button><button className={liked.includes(track.id) ? 'daily-save selected' : 'daily-save'} onClick={() => toggleLike(track.id)} aria-label={`收藏 ${track.title}`}>♡</button></div></article>)}
+        {dailyRecommendations.map((track, index) => <article className="daily-orbit-card-ui" key={track.id} style={{ '--daily-cover': `url(${track.image})` }} ref={node => { dailyCardControlsRef.current[index] = node }}><p>{String(index + 1).padStart(2, '0')} / DAILY PICK</p><h3>{track.title}</h3><small>{track.genre}</small><div><button onClick={() => choose(track)} aria-label={`播放 ${track.title}`}>{active.id === track.id && playing ? 'Ⅱ' : '▶'}<b>播放</b></button><button className={liked.includes(track.id) ? 'daily-save selected' : 'daily-save'} onClick={() => toggleLike(track.id)} aria-label={`收藏 ${track.title}`}>♡</button></div></article>)}
       </div>
     </section>
 

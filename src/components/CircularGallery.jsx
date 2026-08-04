@@ -6,12 +6,12 @@ const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 const lerp = (from, to, amount) => from + (to - from) * amount
 
 class Card {
-  constructor({ gl, geometry, scene, image, index, count, viewport }) {
+  constructor({ gl, geometry, scene, image, index, count, viewport, onImageReady }) {
     this.index = index; this.count = count; this.viewport = viewport; this.extra = 0
     this.texture = new Texture(gl, { generateMipmaps: true })
     this.program = new Program(gl, { vertex: `attribute vec3 position;attribute vec2 uv;uniform mat4 modelViewMatrix;uniform mat4 projectionMatrix;varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`, fragment: `precision highp float;uniform sampler2D tMap;uniform float uRadius;varying vec2 vUv;float box(vec2 p,vec2 b,float r){vec2 d=abs(p)-b;return length(max(d,0.))+min(max(d.x,d.y),0.)-r;}void main(){float a=1.-smoothstep(-.003,.003,box(vUv-.5,vec2(.5-uRadius),uRadius));vec4 c=texture2D(tMap,vUv);gl_FragColor=vec4(c.rgb,a);}`, uniforms: { tMap: { value: this.texture }, uRadius: { value: .035 } }, transparent: true, depthTest: false, depthWrite: false })
     this.mesh = new Mesh(gl, { geometry, program: this.program }); this.mesh.setParent(scene)
-    const imageElement = new Image(); imageElement.crossOrigin = 'anonymous'; imageElement.decoding = 'async'; imageElement.src = image; imageElement.onload = () => { this.texture.image = imageElement }
+    const imageElement = new Image(); imageElement.crossOrigin = 'anonymous'; imageElement.decoding = 'async'; imageElement.src = image; imageElement.onload = () => { this.texture.image = imageElement; onImageReady?.() }
     this.resize(viewport)
   }
   resize(viewport) { this.viewport = viewport; this.width = viewport.width * .205; this.height = this.width * 1.08; this.gap = viewport.width * .13; this.pitch = this.width + this.gap; this.total = this.pitch * this.count; this.mesh.scale.set(this.width, this.height, 1) }
@@ -26,7 +26,7 @@ class GalleryApp {
     this.container = container; this.items = items; this.cardControlsRef = cardControlsRef; this.scroll = { current: 0, target: 0, start: 0 }; this.frame = null; this.resizeFrame = null; this.isVisible = true
     this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 1.5) }); this.gl = this.renderer.gl; container.appendChild(this.gl.canvas)
     this.camera = new Camera(this.gl); this.camera.fov = 42; this.camera.position.z = 20; this.scene = new Transform(); this.geometry = new Plane(this.gl)
-    this.resize(); this.cards = items.map((item, index) => new Card({ gl: this.gl, geometry: this.geometry, scene: this.scene, image: item.image, index, count: items.length, viewport: this.viewport }))
+    this.resize(); this.cards = items.map((item, index) => new Card({ gl: this.gl, geometry: this.geometry, scene: this.scene, image: item.image, index, count: items.length, viewport: this.viewport, onImageReady: () => this.requestFrame() }))
     this.onResize = () => { if (this.resizeFrame) return; this.resizeFrame = requestAnimationFrame(() => { this.resizeFrame = null; this.resize(); this.requestFrame() }) }
     this.onWheel = event => { event.preventDefault(); this.scroll.target += Math.sign(event.deltaY || event.deltaX) * this.viewport.width * .10; this.requestFrame() }
     this.onPointerDown = event => { this.dragging = true; this.startX = event.clientX; this.scroll.start = this.scroll.target; container.setPointerCapture?.(event.pointerId) }

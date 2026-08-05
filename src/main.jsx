@@ -379,6 +379,11 @@ function App() {
     setProgress(0)
     setCurrentTime(0)
     setPlaying(true)
+    if (window.location.hash.startsWith('#track/')) {
+      const nextHash = `#track/${track.id}`
+      window.history.replaceState(null, '', nextHash)
+      setHash(nextHash)
+    }
   }
   const playNextTrack = () => {
     const currentIndex = allTracks.findIndex(track => track.id === active.id)

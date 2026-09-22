@@ -10,6 +10,16 @@ ScrollTrigger.config({ limitCallbacks: true, ignoreMobileResize: true })
 
 const R2_MEDIA_BASE_URL = 'https://pub-24cc0383e0514b31b33e7bfc05fd270c.r2.dev'
 const toR2MediaUrl = (path) => path?.startsWith('/library/') ? `${R2_MEDIA_BASE_URL}${path}` : path
+const soundEffects = {
+  running: [
+    { id: 'running-1', label: '跑步声 · 轻快', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running1.mp3` },
+    { id: 'running-2', label: '跑步声 · 有力', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running2.mp3` },
+  ],
+  breathing: [
+    { id: 'breathing-1', label: '呼吸声 · 舒缓', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing1.mp3` },
+    { id: 'breathing-2', label: '呼吸声 · 深沉', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing2.mp3` },
+  ],
+}
 const rawTracks = [
   { id: 101, type: 'electronic', title: 'Frozen Echoes', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/frozen-echoes.png', audio: '/library/audio/frozen-echoes.wav' },
   { id: 102, type: 'electronic', title: 'Mountain Echoes', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/mountain-echoes.png', audio: '/library/audio/mountain-echoes.wav' },
@@ -60,7 +70,7 @@ const rawTracks = [
   { id: 147, type: 'electronic', mood: 'soft', title: 'Half A Beat', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/half-a-beat.png', audio: '/library/audio/half-a-beat.wav' },
   { id: 148, type: 'electronic', mood: 'soft', title: 'Nightfloor', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/nightfloor.png', audio: '/library/audio/nightfloor.wav' },
   { id: 149, type: 'electronic', mood: 'soft', title: 'One Beat Away', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/one-beat-away.png', audio: '/library/audio/one-beat-away.wav' },
-  { id: 150, type: 'electronic', mood: 'soft', title: 'Starwalk', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/starwalk.png', audio: '/library/audio/starwalk.wav' },
+  { id: 150, type: 'electronic', mood: 'soft', title: 'Starwalk', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/starwalk.png', audio: '/library/audio/starwalk.wav' },
   { id: 151, type: 'electronic', title: 'Pulse', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/pulse.png', audio: '/library/audio/pulse.wav' },
   { id: 152, type: 'electronic', title: 'Pulse Eight', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/pulse-eight.png', audio: '/library/audio/pulse-eight.wav' },
   { id: 153, type: 'electronic', title: 'Reggae Night', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/reggae-night.png', audio: '/library/audio/reggae-night.wav' },
@@ -173,12 +183,16 @@ function App() {
   const [detailTab, setDetailTab] = useState('lyrics')
   const [loadedLyrics, setLoadedLyrics] = useState([])
   const [muted, setMuted] = useState(false)
+  const [soundMenu, setSoundMenu] = useState(null)
+  const [activeEffects, setActiveEffects] = useState({ running: null, breathing: null })
   const [genrePage, setGenrePage] = useState(0)
   const [electronicMood, setElectronicMood] = useState('energetic')
   const [dailyRecommendations] = useState(() => pickDailyTracks())
   const [heroVideoLoaded, setHeroVideoLoaded] = useState(false)
   const dailyCardControlsRef = useRef([])
   const audio = useRef(null)
+  const runningAudio = useRef(null)
+  const breathingAudio = useRef(null)
   const homeRef = useRef(null)
   const genrePageRef = useRef(null)
   const libraryCountRef = useRef(null)
@@ -391,6 +405,18 @@ function App() {
     if (nextTrack) choose(nextTrack)
   }
   const togglePlay = () => setPlaying(value => !value)
+  const toggleSoundEffect = (kind, effect) => {
+    const player = kind === 'running' ? runningAudio.current : breathingAudio.current
+    if (!player) return
+    if (activeEffects[kind]?.id === effect.id) {
+      player.pause()
+      setActiveEffects(current => ({ ...current, [kind]: null }))
+      return
+    }
+    player.src = effect.src
+    player.loop = true
+    player.play().then(() => setActiveEffects(current => ({ ...current, [kind]: effect }))).catch(() => {})
+  }
   const toggleLike = (id) => {
     setFavoritesPage(0)
     setLiked(list => list.includes(id) ? list.filter(x => x !== id) : [...list, id])
@@ -428,6 +454,8 @@ function App() {
   }
 
   return <main>
+    <audio ref={runningAudio} preload="none" />
+    <audio ref={breathingAudio} preload="none" />
     <audio preload="metadata" ref={audio} muted={muted} src={active.audio} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => { const player = event.currentTarget; setCurrentTime(player.currentTime); setProgress(player.duration ? player.currentTime / player.duration * 100 : 0) }} onEnded={playNextTrack} />
     {activeGenreIndex >= 0 ? <section className="genre-page" ref={genrePageRef} style={{ '--genre-image': `url(${types[activeGenreIndex].image})` }}><div className="genre-page-shade" /><header className="shell genre-page-nav"><a href="#home" className="brand">wego</a><a href="#home" className="genre-back">← 返回首页</a></header><div className="shell genre-page-content"><div className="genre-page-title"><p>{types[activeGenreIndex].no} / {activePlaylist.code}</p><h1>{activePlaylist.name}</h1><span>{activePlaylist.description}</span>{activeGenreIndex === 0 && <div className="genre-mood-switch" role="tablist" aria-label="电子音乐列表"><button className={electronicMood === 'soft' ? 'mood-active' : ''} onClick={() => setElectronicMood('soft')} role="tab" aria-selected={electronicMood === 'soft'}>柔和</button><button className={electronicMood === 'energetic' ? 'mood-active' : ''} onClick={() => setElectronicMood('energetic')} role="tab" aria-selected={electronicMood === 'energetic'}>动感</button></div>}</div><div className="genre-page-list">{paginatedGenreItems.map((item, index) => { const track = playlistTracks.find(song => song.id === item.id); return <div className={active.id === item.id ? 'genre-page-row active-page-row' : 'genre-page-row'} key={item.id} role="link" tabIndex={0} onClick={() => openTrack(track)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openTrack(track) } }}><span>{String(genrePage * genreItemsPerPage + index + 1).padStart(2, '0')}</span><div className="genre-page-cover" style={{backgroundImage:`url(${track.image})`}}></div><button onClick={(event) => { event.stopPropagation(); choose(track) }}>{active.id === item.id && playing ? 'Ⅱ' : '▶'}</button><strong>{item.title}</strong><em>{item.artist}</em><small>{item.time}</small><button className={liked.includes(item.id) ? 'library-like selected' : 'library-like'} onClick={(event) => { event.stopPropagation(); toggleLike(item.id) }}>♡</button></div> })}{activeGenreIndex === 0 && !visibleGenreItems.length && <div className="genre-list-empty">柔和列表正在筹备中</div>}</div>{visibleGenreItems.length > genreItemsPerPage && <nav className="genre-page-pagination" aria-label="音乐类型列表分页"><button onClick={() => setGenrePage(page => Math.max(0, page - 1))} disabled={genrePage === 0}>← 上一页</button><span>{String(genrePage + 1).padStart(2, '0')} / {String(genrePageCount).padStart(2, '0')}</span><button onClick={() => setGenrePage(page => Math.min(genrePageCount - 1, page + 1))} disabled={genrePage === genrePageCount - 1}>下一页 →</button></nav>}<div className="genre-page-switch">{types.map((type, index) => <button key={type.slug} className={index === activeGenreIndex ? 'page-switch-active' : ''} onClick={() => openGenre(index)}>{type.cn}</button>)}</div></div></section> : detailTrack ? <section className="track-detail-page"><header className="shell track-detail-nav"><a href="#music" className="brand">wego</a><span>WEGO MUSIC / SINGLE</span><a href="#music">← 返回音乐</a></header><div className="shell track-detail-layout"><div className="detail-turntable"><div className={active.id === detailTrack.id && playing ? 'detail-vinyl spinning' : 'detail-vinyl'}><img src={detailTrack.image} alt={`${detailTrack.title} 专辑封面`} /></div><i className="detail-tonearm" /><button className="detail-play" onClick={() => choose(detailTrack)}>{active.id === detailTrack.id && playing ? 'Ⅱ 暂停' : '▶ 播放单曲'}</button></div><article className="track-detail-copy"><p className="section-kicker">NOW PLAYING / {detailTrack.genre}</p><h1>{detailTrack.title}</h1><p className="detail-meta">专辑：WEGO MUSIC <span>·</span> 音乐人：{detailTrack.artist} <span>·</span> {detailTrack.time}</p><div className="detail-tabs"><button className={detailTab === 'lyrics' ? 'active' : ''} onClick={() => setDetailTab('lyrics')}>歌词</button><button className={detailTab === 'about' ? 'active' : ''} onClick={() => setDetailTab('about')}>单曲信息</button><button className={detailTab === 'similar' ? 'active' : ''} onClick={() => setDetailTab('similar')}>相似推荐</button></div>{detailTab === 'lyrics' && <div className="detail-lyrics">{detailLyrics.map((line, index) => <p data-lyric-index={index} className={index === activeLyricIndex ? 'lyric-active' : ''} key={`${line.time}-${index}`}>{line.text || ' '}</p>)}</div>}{detailTab === 'about' && <div className="detail-about"><strong>WEGO MUSIC ORIGINAL</strong><p>{detailTrack.title} 是一段为夜晚而作的声音记录。低频、留白与缓慢推进的旋律共同构成它的听觉空间。</p><dl><div><dt>类型</dt><dd>{detailTrack.genre}</dd></div><div><dt>艺术家</dt><dd>{detailTrack.artist}</dd></div><div><dt>格式</dt><dd>LOCAL WAV / STEREO</dd></div></dl></div>}{detailTab === 'similar' && <div className="detail-similar">{allTracks.filter(track => track.type === detailTrack.type && track.id !== detailTrack.id).slice(0, 4).map((track, index) => <button key={track.id} onClick={() => { choose(track); openTrack(track) }}><span>{String(index + 1).padStart(2, '0')}</span><img src={track.image} alt="" /><strong>{track.title}<small>{track.artist}</small></strong><i>↗</i></button>)}</div>}</article></div></section> : <div className="site-motion-root" ref={homeRef}><section className="hero wego-home wego-v3" id="home">
       <video autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1400&q=70">
@@ -481,8 +509,9 @@ function App() {
     <footer className="shell"><a className="brand wego-brand" href="#home">wego</a><p>© 2024 WEGO MUSIC. ALL RIGHTS RESERVED.</p><a href="#home">BACK TO TOP ↑</a></footer>
     </div>}
 
-    <div className="player"><div className="player-track"><button className="player-cover player-detail-link" onClick={() => openTrack(active)} aria-label={`查看 ${active.title} 详情`} style={{backgroundImage:`url(${active.image})`}}></button><button className="player-detail-info" onClick={() => openTrack(active)}><strong>{active.title}</strong><span>{active.artist}</span></button><div className="player-track-actions"><a className="player-download" href={active.audio} download={`${active.title}.wav`} aria-label={`下载 ${active.title}`} title={`下载 ${active.title}`}>⇩</a><button className={liked.includes(active.id) ? 'player-heart selected' : 'player-heart'} onClick={() => toggleLike(active.id)} aria-label={`收藏 ${active.title}`}>♡</button><button className={muted ? 'player-volume muted' : 'player-volume'} onClick={() => setMuted(value => !value)} aria-label={muted ? '开启声音' : '静音'} aria-pressed={muted} title={muted ? '开启声音' : '静音'}><i /></button></div></div><div className="controls"><button onClick={() => choose(allTracks[(allTracks.findIndex(track => track.id === active.id) + allTracks.length - 1) % allTracks.length])}>↶</button><button className="main-play" onClick={togglePlay}>{playing ? 'Ⅱ' : '▶'}</button><button onClick={() => choose(allTracks[(allTracks.findIndex(track => track.id === active.id) + 1) % allTracks.length])}>↷</button></div><div className="player-progress"><span>{formatTime(currentTime)}</span><div onClick={seek}><i style={{width:`${progress}%`}}></i></div><span>{formatTime(duration)}</span></div></div>
+    <div className="player"><div className="player-track"><button className="player-cover player-detail-link" onClick={() => openTrack(active)} aria-label={`查看 ${active.title} 详情`} style={{backgroundImage:`url(${active.image})`}}></button><button className="player-detail-info" onClick={() => openTrack(active)}><strong>{active.title}</strong><span>{active.artist}</span></button><div className="player-track-actions"><a className="player-download" href={active.audio} download={`${active.title}.wav`} aria-label={`下载 ${active.title}`} title={`下载 ${active.title}`}>⇩</a><button className={liked.includes(active.id) ? 'player-heart selected' : 'player-heart'} onClick={() => toggleLike(active.id)} aria-label={`收藏 ${active.title}`}>♡</button><button className={muted ? 'player-volume muted' : 'player-volume'} onClick={() => setMuted(value => !value)} aria-label={muted ? '开启声音' : '静音'} aria-pressed={muted} title={muted ? '开启声音' : '静音'}><i /></button></div></div><div className="controls"><button onClick={() => choose(allTracks[(allTracks.findIndex(track => track.id === active.id) + allTracks.length - 1) % allTracks.length])}>↶</button><button className="main-play" onClick={togglePlay}>{playing ? 'Ⅱ' : '▶'}</button><button onClick={() => choose(allTracks[(allTracks.findIndex(track => track.id === active.id) + 1) % allTracks.length])}>↷</button></div><div className="ambient-sound-tools" aria-label="环境音效">{[['running', '跑步声'], ['breathing', '呼吸声']].map(([kind, label]) => <div className="ambient-sound" key={kind}><button className={activeEffects[kind] ? 'ambient-trigger is-playing' : 'ambient-trigger'} onClick={() => setSoundMenu(menu => menu === kind ? null : kind)} aria-expanded={soundMenu === kind} aria-label={`打开${label}列表`}><svg viewBox="0 0 24 24" aria-hidden="true">{kind === 'running' ? <><path d="M13.5 4.5 11 8l3.2 2.1 2.1 4.2M11 8 7 10l-2.5 4M14.2 10.1 10 14l-2 5.5M9.7 14.4 15 18l4.5-.2" /></> : <><path d="M11.7 4.2c-2.8.2-5.1 2.8-5.1 6.2 0 3.5 2.2 6.7 5.1 8.8M12.3 4.2c2.8.2 5.1 2.8 5.1 6.2 0 3.5-2.2 6.7-5.1 8.8M12 4v15.3M8.5 10.4c1.1.6 2.2.8 3.5.8s2.4-.2 3.5-.8" /></>}</svg><span>{label}</span><em>{activeEffects[kind] ? 'ON' : 'FX'}</em></button>{soundMenu === kind && <div className="ambient-menu" role="menu"><p>{label.toUpperCase()} / SELECT</p>{soundEffects[kind].map(effect => <button key={effect.id} className={activeEffects[kind]?.id === effect.id ? 'effect-option effect-active' : 'effect-option'} onClick={() => toggleSoundEffect(kind, effect)} role="menuitem"><span>{effect.label}</span><i>{activeEffects[kind]?.id === effect.id ? 'Ⅱ' : '▶'}</i></button>)}</div>}</div>)}</div><div className="player-progress"><span>{formatTime(currentTime)}</span><div onClick={seek}><i style={{width:`${progress}%`}}></i></div><span>{formatTime(duration)}</span></div></div>
   </main>
+
 }
 
 createRoot(document.getElementById('root')).render(<App />)

@@ -14,10 +14,12 @@ const soundEffects = {
   running: [
     { id: 'running-1', label: '跑步声 1', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running1.mp3` },
     { id: 'running-2', label: '跑步声 2', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running2.mp3` },
+    { id: 'running-3', label: '跑步声 3', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running3.mp3` },
   ],
   breathing: [
     { id: 'breathing-1', label: '呼吸声 1', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing1.mp3` },
     { id: 'breathing-2', label: '呼吸声 2', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing2.mp3` },
+    { id: 'breathing-3', label: '呼吸声 3', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing3.mp3` },
   ],
 }
 const rawTracks = [

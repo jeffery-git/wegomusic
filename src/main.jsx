@@ -343,7 +343,7 @@ function App() {
   }, [activeGenreIndex])
 
   useLayoutEffect(() => {
-    if (activeGenreIndex >= 0) return
+    if (activeGenreIndex >= 0 || detailTrack) return
     const root = homeRef.current
     if (!root) return
 
@@ -398,7 +398,7 @@ function App() {
     }, root)
 
     return () => context.revert()
-  }, [activeGenreIndex])
+  }, [activeGenreIndex, detailTrack?.id])
 
   const choose = (track) => {
     setActive(track)

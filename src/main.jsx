@@ -108,7 +108,13 @@ const rawTracks = [
   { id: 185, type: 'romantic', title: 'Street Fantasy', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/street-fantasy.png', audio: '/library/audio/street-fantasy.wav' },
   { id: 186, type: 'romantic', title: 'synths Dreams', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/synths-dreams.png', audio: '/library/audio/synths-dreams.wav' },
   { id: 187, type: 'romantic', title: '慢慢看你', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/slowly-watch-you.png', audio: '/library/audio/slowly-watch-you.wav' },
-  { id: 188, type: 'romantic', title: '微醺', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/tipsy.png', audio: '/library/audio/tipsy.wav' },
+  { id: 188, type: 'romantic', title: '微醺', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/tipsy.png', audio: '/library/audio/tipsy.wav' },  { id: 189, type: 'vocal-pop', title: 'Pink sky', artist: 'WEGO MUSIC', time: '—', genre: 'VOCAL POP', image: '/library/covers/pink-sky.webp', audio: '/library/audio/pink-sky.mp3' },
+  { id: 190, type: 'vocal-pop', title: '天鹅绒', artist: 'WEGO MUSIC', time: '—', genre: 'VOCAL POP', image: '/library/covers/velvet.webp', audio: '/library/audio/velvet.mp3' },
+  { id: 191, type: 'vocal-pop', title: '旧梦', artist: 'WEGO MUSIC', time: '—', genre: 'VOCAL POP', image: '/library/covers/old-dream.webp', audio: '/library/audio/old-dream.mp3' },
+  { id: 192, type: 'romantic', title: 'cill city', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/cill-city.webp', audio: '/library/audio/cill-city.mp3' },
+  { id: 193, type: 'romantic', title: 'simple', artist: 'WEGO MUSIC', time: '—', genre: 'ROMANTIC LYRIC', image: '/library/covers/simple.webp', audio: '/library/audio/simple.mp3' },
+  { id: 194, type: 'electronic', title: '电子远征', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/electronic-expedition.webp', audio: '/library/audio/electronic-expedition.mp3' },
+  { id: 195, type: 'electronic', mood: 'soft', title: 'Applause', artist: 'WEGO MUSIC', time: '—', genre: 'ELECTRONIC MOTION', image: '/library/covers/applause.webp', audio: '/library/audio/applause.mp3' },
 ]
 
 const localTracks = rawTracks.map((track) => ({
@@ -129,7 +135,7 @@ let types = [
 
 types = types.map((type) => ({ ...type, image: toR2MediaUrl(type.image) }))
 
-const latestUpdateTrackIds = [185, 186, 187, 188]
+const latestUpdateTrackIds = [189, 190, 191, 192, 193, 194, 195]
 
 const genrePlaylists = [
   { name: '电子音乐', code: 'ELECTRONIC MOTION', description: '高能节拍、低频推进与夜间驱动。', items: localTracks.filter(track => track.type === 'electronic') },

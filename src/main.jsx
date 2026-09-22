@@ -12,12 +12,12 @@ const R2_MEDIA_BASE_URL = 'https://pub-24cc0383e0514b31b33e7bfc05fd270c.r2.dev'
 const toR2MediaUrl = (path) => path?.startsWith('/library/') ? `${R2_MEDIA_BASE_URL}${path}` : path
 const soundEffects = {
   running: [
-    { id: 'running-1', label: '跑步声 · 轻快', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running1.mp3` },
-    { id: 'running-2', label: '跑步声 · 有力', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running2.mp3` },    { id: 'running-3', label: '跑步声 · 冲刺', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running3.mp3` },
+    { id: 'running-1', label: '跑步机 1', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running1.mp3` },
+    { id: 'running-2', label: '跑步机 2', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running2.mp3` },    { id: 'running-3', label: '跑步机 3', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running3.mp3` },
   ],
   breathing: [
-    { id: 'breathing-1', label: '呼吸声 · 舒缓', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing1.mp3` },
-    { id: 'breathing-2', label: '呼吸声 · 深沉', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing2.mp3` },
+    { id: 'breathing-1', label: '呼吸声 1', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing1.mp3` },
+    { id: 'breathing-2', label: '呼吸声 2', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing2.mp3` },
   ],
 }
 const rawTracks = [

@@ -13,7 +13,7 @@ const toR2MediaUrl = (path) => path?.startsWith('/library/') ? `${R2_MEDIA_BASE_
 const soundEffects = {
   running: [
     { id: 'running-1', label: '跑步声 · 轻快', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running1.mp3` },
-    { id: 'running-2', label: '跑步声 · 有力', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running2.mp3` },
+    { id: 'running-2', label: '跑步声 · 有力', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running2.mp3` },    { id: 'running-3', label: '跑步声 · 冲刺', src: `${R2_MEDIA_BASE_URL}/sound-effects/running/running3.mp3` },
   ],
   breathing: [
     { id: 'breathing-1', label: '呼吸声 · 舒缓', src: `${R2_MEDIA_BASE_URL}/sound-effects/breathing/breathing1.mp3` },

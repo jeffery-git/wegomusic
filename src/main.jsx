@@ -438,7 +438,8 @@ function App() {
     try {
       const response = await fetch(track.audio)
       if (!response.ok) throw new Error('Download request failed')
-      const file = await response.blob()
+      const source = await response.arrayBuffer()
+      const file = new Blob([source], { type: 'application/octet-stream' })
       const link = document.createElement('a')
       link.href = URL.createObjectURL(file)
       link.download = `${track.title}.${track.audio?.split('.').pop()?.split('?')[0] || 'mp3'}`
